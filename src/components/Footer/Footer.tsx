@@ -1,7 +1,5 @@
-import  React  from "react";
+import React from "react";
 import TaskFilter from "./TasksFilter";
-
-
 
 export default function Footer({
   filter,
@@ -9,7 +7,6 @@ export default function Footer({
   activeTasksCount,
   clearCompleted,
 }) {
-
   return (
     <footer className="footer">
       <span className="todo-count">

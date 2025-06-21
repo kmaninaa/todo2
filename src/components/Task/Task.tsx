@@ -1,11 +1,22 @@
-import  React  from "react";
+// components/Task/Task.tsx
+import React from "react";
 import { useState } from "react";
 import { formatDistanceToNow } from "date-fns";
+import { useContext } from "react";
+import { TimerContextStore } from "../../helpers/contextTimer/timerCreateContext";
 
 export default function Task({ task, onToggle, onDelete, onEdit }) {
-  console.log(task.completed);
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(task.text);
+  const {
+    activeTaskId,
+    timeLeft,
+    startTimer,
+    pauseTimer,
+    resetTimer,
+    isRunning,
+    setTaskTimer,
+  } = useContext(TimerContextStore);
 
   const handleEdit = () => {
     if (isEditing) {
@@ -17,6 +28,23 @@ export default function Task({ task, onToggle, onDelete, onEdit }) {
     }
     setIsEditing(!isEditing);
   };
+
+  const handleTimerClick = () => {
+    if (activeTaskId === task.id) {
+      if (isRunning) {
+        pauseTimer();
+      } else {
+        startTimer();
+      }
+    } else {
+      setTaskTimer(task.id, Number(task.min), Number(task.sec));
+    }
+  };
+
+  const formatTime = (min: number, sec: number) => {
+    return `${min.toString().padStart(2, "0")}:${sec.toString().padStart(2, "0")}`;
+  };
+
   return (
     <li
       className={`${task.completed ? "completed" : ""} ${isEditing ? "editing" : ""}`}
@@ -37,7 +65,16 @@ export default function Task({ task, onToggle, onDelete, onEdit }) {
               includeSeconds: true,
             })}
           </span>
+          <span className="timer">
+            {activeTaskId === task.id
+              ? formatTime(timeLeft.min, timeLeft.sec)
+              : formatTime(Number(task.min), Number(task.sec))}
+          </span>
         </label>
+        <button
+          className={`icon icon-play ${activeTaskId === task.id && isRunning ? "active" : ""}`}
+          onClick={handleTimerClick}
+        />
         <button className="icon icon-edit" onClick={handleEdit} />
         <button
           className="icon icon-destroy"

@@ -1,4 +1,4 @@
-import  React  from "react";
+import React from "react";
 import { useContext } from "react";
 import Task from "./Task";
 import { ContexStore } from "../../helpers/context/createContext";
