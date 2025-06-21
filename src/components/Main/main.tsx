@@ -17,11 +17,11 @@ if (!rootElement) {
 createRoot(rootElement).render(
   <>
     <StoreProvider>
-      <TimerStoreProvider>
-        <ButtonsStoreProvider>
+      <ButtonsStoreProvider>
+        <TimerStoreProvider>
           <App />
-        </ButtonsStoreProvider>
-      </TimerStoreProvider>
+        </TimerStoreProvider>
+      </ButtonsStoreProvider>
     </StoreProvider>
-  </>,
+  </>
 );
