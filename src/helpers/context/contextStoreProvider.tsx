@@ -1,20 +1,15 @@
-import { useState } from "react";
+import React, { useState, ReactNode } from "react";
 import { ContexStore } from "./createContext";
+import { IContext, ITask } from "./type";
 
 export const StoreProvider = ({ children }) => {
-  const [tasks, setTask] = useState([]);
+  const [tasks, setTask] = useState<ITask[]>([]);
 
-  function addTask(text) {
-    const newTask = {
-      id: Date.now(),
-      text,
-      completed: false,
-      createdAt: new Date(),
-    };
+  function addTask(newTask: ITask) {
     setTask([...tasks, newTask]);
   }
 
-  function deleteTask(id) {
+  function deleteTask(id: number) {
     setTask(tasks.filter((task) => task.id !== id));
   }
 
@@ -22,7 +17,7 @@ export const StoreProvider = ({ children }) => {
     return tasks;
   }
 
-  const toggleTask = (id) => {
+  const toggleTask = (id: number) => {
     setTask(
       tasks.map((task) =>
         task.id === id ? { ...task, completed: !task.completed } : task
@@ -30,7 +25,7 @@ export const StoreProvider = ({ children }) => {
     );
   };
 
-  const editTask = (id, newText) => {
+  const editTask = (id: number, newText: string) => {
     setTask(
       tasks.map((task) => (task.id === id ? { ...task, text: newText } : task))
     );
@@ -39,7 +34,7 @@ export const StoreProvider = ({ children }) => {
   const clearCompleted = () => {
     setTask(tasks.filter((task) => !task.completed));
   };
-  const values = {
+  const values:IContext = {
     addTask,
     deleteTask,
     getTasks,

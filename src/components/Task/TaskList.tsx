@@ -1,9 +1,8 @@
+import  React  from "react";
 import { useContext } from "react";
 import Task from "./Task";
-import NewTaskForm from "./NewTaskForm";
 import { ContexStore } from "../../helpers/context/createContext";
 import { TimerContextStore } from "../../helpers/contextTimer/timerCreateContext";
-import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
 import { ContextButtonsStore } from "../../helpers/contextButtons/createContextButton";
 

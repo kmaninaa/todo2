@@ -1,6 +1,7 @@
+import  React  from "react";
 import TaskFilter from "./TasksFilter";
-// import { ContextButtonsStore } from "../../helpers/contextButtons/createContextButton";
-// import { useContext } from "react";
+
+
 
 export default function Footer({
   filter,
@@ -8,8 +9,6 @@ export default function Footer({
   activeTasksCount,
   clearCompleted,
 }) {
-  // const { filter, setFilter } = useContext(ContextButtonsStore);
-  // console.log(filter);
 
   return (
     <footer className="footer">
