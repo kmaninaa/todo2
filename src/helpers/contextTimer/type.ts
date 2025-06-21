@@ -8,6 +8,7 @@ export interface ITimerContextType {
   startTimer: () => void;
   pauseTimer: () => void;
   resetTimer: () => void;
+  stopTimer: () => void;
   setTaskTimer: (taskId: number, min: number, sec: number) => void;
   isRunning: boolean;
 }

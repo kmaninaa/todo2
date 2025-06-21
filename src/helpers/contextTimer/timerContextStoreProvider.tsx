@@ -49,6 +49,12 @@ export const TimerStoreProvider = ({
     setIsRunning(false);
   };
 
+  const stopTimer = () => {
+    setIsRunning(false);
+    setActiveTaskId(null);
+    setTimeLeft({ min: 0, sec: 0 });
+  };
+
   const resetTimer = () => {
     setIsRunning(false);
     setTimeLeft(initialTime);
@@ -67,9 +73,10 @@ export const TimerStoreProvider = ({
     setTimeLeft,
     startTimer,
     pauseTimer,
+    stopTimer,
     resetTimer,
     isRunning,
-    setTaskTimer, // Добавим эту функцию
+    setTaskTimer,
   };
 
   return (

@@ -34,7 +34,7 @@ body {
   background: #f5f5f5;
   color: #111111;
   min-width: 230px;
-  max-width: 550px;
+  max-width: 650px;
   margin: 0 auto;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -162,6 +162,9 @@ body {
   position: relative;
   font-size: 24px;
   border-bottom: 1px solid #ededed;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
 }
 
 .todo-list li:last-child {
@@ -187,13 +190,12 @@ body {
 .todo-list li .toggle {
   text-align: center;
   width: 40px;
-  /* auto, since non-WebKit browsers doesn't support input styling */
   height: auto;
   position: absolute;
   top: 0;
   bottom: 0;
   margin: auto 0;
-  border: none; /* Mobile Safari */
+  border: none;
   -webkit-appearance: none;
   appearance: none;
   cursor: pointer;
@@ -204,10 +206,6 @@ body {
 }
 
 .todo-list li .toggle + label {
-  /*
-		Firefox requires `#` to be escaped - https://bugzilla.mozilla.org/show_bug.cgi?id=922433
-		IE and Edge requires *everything* to be escaped to render, so we do that instead of just the `#` - https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/7157459/
-	*/
   background-image: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2240%22%20height%3D%2240%22%20viewBox%3D%22-10%20-18%20100%20135%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2250%22%20fill%3D%22none%22%20stroke%3D%22%23ededed%22%20stroke-width%3D%223%22/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: center left;
@@ -217,19 +215,15 @@ body {
   background-image: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2240%22%20height%3D%2240%22%20viewBox%3D%22-10%20-18%20100%20135%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2250%22%20fill%3D%22none%22%20stroke%3D%22%23bddad5%22%20stroke-width%3D%223%22/%3E%3Cpath%20fill%3D%22%235dc2af%22%20d%3D%22M72%2025L42%2071%2027%2056l-4%204%2020%2020%2034-52z%22/%3E%3C/svg%3E");
 }
 
-.todo-list li label {
+.todo-list li .view {
   display: flex;
+  width: 100%;
   align-items: center;
-  justify-content: space-between;
-  padding: 15px 85px 15px 60px;
 }
 
-.todo-list li label .created {
-  font-size: 13px;
-  color: gray;
-}
-
-.todo-list li label .description {
+.todo-list li label {
+  flex-grow: 1;
+  padding: 15px 15px 15px 60px;
   word-break: break-all;
   display: block;
   line-height: 1.2;
@@ -238,43 +232,72 @@ body {
   color: #4d4d4d;
 }
 
-.todo-list li.completed label .description {
+.todo-list li.completed label {
   color: #cdcdcd;
   text-decoration: line-through;
 }
 
-.todo-list li .icon {
+.todo-list li label .created {
+  font-size: 13px;
+  color: gray;
+  display: block;
+}
+
+.timer {
   position: absolute;
-  top: 0;
-  bottom: -3px;
+  right: 160px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: #4d4d4d;
+  font-family: monospace;
+}
+
+.timer-controls {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 5px;
+}
+
+.todo-list li .icon {
   width: 30px;
-  height: 40px;
-  font-size: 34px;
-  color: #cc9a9a;
-  margin: auto 0 11px;
-  transition: color 0.2s ease-out;
+  height: 30px;
+  font-size: 18px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .todo-list li .icon:hover {
   color: #af5b5e;
+  transform: scale(1.1);
 }
 
-.todo-list li .icon-destroy {
-  right: 10px;
+.icon-play:after {
+  content: "▶";
 }
 
-.todo-list li .icon-destroy:after {
-  content: "×";
+.icon-pause:after {
+  content: "⏸";
 }
 
-.todo-list li .icon-edit {
-  font-size: 19px;
-  right: 45px;
+.icon-stop:after {
+  content: "⏹";
 }
 
-.todo-list li .icon-edit:after {
+.icon-edit:after {
   content: "✎";
+  font-size: 19px;
+}
+
+.icon-destroy:after {
+  content: "×";
 }
 
 .todo-list li .edit {
@@ -391,10 +414,12 @@ html .clear-completed:active {
   text-decoration: underline;
 }
 
-/*
-	Hack to remove background from Mobile Safari.
-	Can't use it globally since it destroys checkboxes in Firefox
-*/
+.error {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
 @media screen and (-webkit-min-device-pixel-ratio: 0) {
   .toggle-all,
   .todo-list li .toggle {
@@ -413,5 +438,18 @@ html .clear-completed:active {
 
   .filters {
     bottom: 10px;
+  }
+
+  .todo-list li label {
+    padding-right: 100px;
+  }
+
+  .timer {
+    right: 100px;
+    font-size: 14px;
+  }
+
+  .timer-controls {
+    right: 5px;
   }
 }

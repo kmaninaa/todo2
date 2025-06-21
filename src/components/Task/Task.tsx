@@ -13,7 +13,7 @@ export default function Task({ task, onToggle, onDelete, onEdit }) {
     timeLeft,
     startTimer,
     pauseTimer,
-    resetTimer,
+    stopTimer,
     isRunning,
     setTaskTimer,
   } = useContext(TimerContextStore);
@@ -29,16 +29,19 @@ export default function Task({ task, onToggle, onDelete, onEdit }) {
     setIsEditing(!isEditing);
   };
 
-  const handleTimerClick = () => {
-    if (activeTaskId === task.id) {
-      if (isRunning) {
-        pauseTimer();
-      } else {
-        startTimer();
-      }
-    } else {
+  const handleStart = () => {
+    if (activeTaskId !== task.id) {
       setTaskTimer(task.id, Number(task.min), Number(task.sec));
     }
+    startTimer();
+  };
+
+  const handlePause = () => {
+    pauseTimer();
+  };
+
+  const handleStop = () => {
+    stopTimer();
   };
 
   const formatTime = (min: number, sec: number) => {
@@ -71,15 +74,46 @@ export default function Task({ task, onToggle, onDelete, onEdit }) {
               : formatTime(Number(task.min), Number(task.sec))}
           </span>
         </label>
-        <button
-          className={`icon icon-play ${activeTaskId === task.id && isRunning ? "active" : ""}`}
-          onClick={handleTimerClick}
-        />
-        <button className="icon icon-edit" onClick={handleEdit} />
-        <button
-          className="icon icon-destroy"
-          onClick={() => onDelete(task.id)}
-        />
+        <div className="timer-controls">
+          {activeTaskId === task.id ? (
+            <>
+              {isRunning ? (
+                <button
+                  className="icon icon-pause"
+                  onClick={handlePause}
+                  title="Pause"
+                />
+              ) : (
+                <button
+                  className="icon icon-play"
+                  onClick={handleStart}
+                  title="Start"
+                />
+              )}
+              <button
+                className="icon icon-stop"
+                onClick={handleStop}
+                title="Stop"
+              />
+            </>
+          ) : (
+            <button
+              className="icon icon-play"
+              onClick={handleStart}
+              title="Start"
+            />
+          )}
+          <button
+            className="icon icon-edit"
+            onClick={handleEdit}
+            title="Edit"
+          />
+          <button
+            className="icon icon-destroy"
+            onClick={() => onDelete(task.id)}
+            title="Delete"
+          />
+        </div>
       </div>
       {isEditing && (
         <input
