@@ -1,5 +1,4 @@
 import React from "react";
-import { useState } from "react";
 import "./index.css";
 import { useContext } from "react";
 import { ContexStore } from "../../helpers/context/createContext";
@@ -35,7 +34,12 @@ export default function NewTaskForm() {
         <input
           className="new-todo"
           placeholder="What needs to be done?"
-          {...register("text", { required: "Task text is required" })}
+          {...register("text", {
+            required: "Task text is required",
+            validate: (value) =>
+              value.trim().length > 0 ||
+              "Task cannot be empty or consist of only spaces",
+          })}
           autoFocus
         />
         {errors.text && <p className="error">{errors.text.message}</p>}

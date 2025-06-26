@@ -20,14 +20,14 @@ export const StoreProvider = ({ children }) => {
   const toggleTask = (id: number) => {
     setTask(
       tasks.map((task) =>
-        task.id === id ? { ...task, completed: !task.completed } : task,
-      ),
+        task.id === id ? { ...task, completed: !task.completed } : task
+      )
     );
   };
 
   const editTask = (id: number, newText: string) => {
     setTask(
-      tasks.map((task) => (task.id === id ? { ...task, text: newText } : task)),
+      tasks.map((task) => (task.id === id ? { ...task, text: newText } : task))
     );
   };
 

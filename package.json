@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "date-fns": "^4.1.0",
+    "picomatch": "^4.0.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.58.1"
