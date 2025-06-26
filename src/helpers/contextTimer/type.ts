@@ -1,16 +1,11 @@
-import { createContext } from "react";
+import { ITimer } from "../../components/Timer/type";
 
 export interface ITimerContextType {
-  activeTaskId: number | null;
-  setActiveTaskId: (id: number | null) => void;
-  timeLeft: { min: number; sec: number };
-  setTimeLeft: (time: { min: number; sec: number }) => void;
-  startTimer: () => void;
-  pauseTimer: () => void;
-  resetTimer: () => void;
-  stopTimer: () => void;
-  setTaskTimer: (taskId: number, min: number, sec: number) => void;
-  isRunning: boolean;
+  timers: ITimer[];
+  startTimer: (id: number) => void;
+  pauseTimer: (id: number) => void;
+  stopTimer: (id: number) => void;
+  updateTimer: (id: number, min: number, sec: number) => void;
+  addTimer: (id: number, min: number, sec: number) => void;
+  removeTimer: (id: number) => void;
 }
-
-export const TimerContextStore = createContext({} as ITimerContextType);

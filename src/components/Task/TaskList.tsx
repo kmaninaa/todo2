@@ -2,7 +2,6 @@ import React from "react";
 import { useContext } from "react";
 import Task from "./Task";
 import { ContexStore } from "../../helpers/context/createContext";
-import { TimerContextStore } from "../../helpers/contextTimer/timerCreateContext";
 import Footer from "../Footer/Footer";
 import { ContextButtonsStore } from "../../helpers/contextButtons/createContextButton";
 
@@ -18,7 +17,7 @@ export default function TaskList() {
   const { filter, setFilter } = useContext(ContextButtonsStore);
 
   const tasks = getTasks();
-  const { getTask } = useContext(TimerContextStore);
+
 
   const filteredTasks = tasks.filter((task) => {
     if (filter === "active") return !task.completed;
@@ -40,8 +39,6 @@ export default function TaskList() {
             />
           ))}
         </ul>
-
-        <span>{getTask}</span>
         <Footer
           filter={filter}
           setFilter={setFilter}

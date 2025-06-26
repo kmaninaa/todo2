@@ -1,86 +1,79 @@
-// helpers/contextTimer/timerStoreProvider.tsx
-import React, { useState, useEffect } from "react";
-import { TimerContextStore } from "./timerCreateContext";
-import { ITimerContextType } from "./type";
+import React, { useState, useEffect, useCallback } from 'react';
+import { TimerContextStore } from './timerCreateContext';
+import { ITimer } from '../../components/Timer/type';
 
-export const TimerStoreProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
-  const [activeTaskId, setActiveTaskId] = useState<number | null>(null);
-  const [timeLeft, setTimeLeft] = useState({ min: 0, sec: 0 });
-  const [isRunning, setIsRunning] = useState(false);
-  const [initialTime, setInitialTime] = useState({ min: 0, sec: 0 });
+export const TimerStoreProvider = ({ children }: { children: React.ReactNode }) => {
+  const [timers, setTimers] = useState<ITimer[]>([]);
+
+  const addTimer = useCallback((id: number, min: number, sec: number) => {
+    setTimers(prev => [
+      ...prev.filter(t => t.id !== id),
+      { id, isRunning: false, timeLeft: { min, sec } }
+    ]);
+  }, []);
+
+  const removeTimer = useCallback((id: number) => {
+    setTimers(prev => prev.filter(t => t.id !== id));
+  }, []);
+
+  const updateTimer = useCallback((id: number, min: number, sec: number) => {
+    setTimers(prev => prev.map(t => 
+      t.id === id ? { ...t, timeLeft: { min, sec } } : t
+    ));
+  }, []);
+
+  const startTimer = useCallback((id: number) => {
+    setTimers(prev => prev.map(t => 
+      t.id === id ? { ...t, isRunning: true } : t
+    ));
+  }, []);
+
+  const pauseTimer = useCallback((id: number) => {
+    setTimers(prev => prev.map(t => 
+      t.id === id ? { ...t, isRunning: false } : t
+    ));
+  }, []);
+
+  const stopTimer = useCallback((id: number) => {
+    setTimers(prev => prev.map(t => 
+      t.id === id ? { ...t, isRunning: false, timeLeft: { min: 0, sec: 0 } } : t
+    ));
+  }, []);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
+    const interval = setInterval(() => {
+      setTimers(prev => prev.map(timer => {
+        if (!timer.isRunning) return timer;
+        
+        const { min, sec } = timer.timeLeft;
+        
+        if (min === 0 && sec === 0) {
+          return { ...timer, isRunning: false };
+        }
 
-    if (isRunning) {
-      interval = setInterval(() => {
-        setTimeLeft((prev) => {
-          if (prev.min === 0 && prev.sec === 0) {
-            clearInterval(interval as NodeJS.Timeout);
-            setIsRunning(false);
-            return { min: 0, sec: 0 };
-          }
+        if (sec === 0) {
+          return { ...timer, timeLeft: { min: min - 1, sec: 59 } };
+        }
 
-          if (prev.sec === 0) {
-            return { min: prev.min - 1, sec: 59 };
-          }
+        return { ...timer, timeLeft: { min, sec: sec - 1 } };
+      }));
+    }, 1000);
 
-          return { ...prev, sec: prev.sec - 1 };
-        });
-      }, 1000);
-    } else if (interval) {
-      clearInterval(interval);
-    }
+    return () => clearInterval(interval);
+  }, []);
 
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [isRunning]);
-
-  const startTimer = () => {
-    setIsRunning(true);
-  };
-
-  const pauseTimer = () => {
-    setIsRunning(false);
-  };
-
-  const stopTimer = () => {
-    setIsRunning(false);
-    setActiveTaskId(null);
-    setTimeLeft({ min: 0, sec: 0 });
-  };
-
-  const resetTimer = () => {
-    setIsRunning(false);
-    setTimeLeft(initialTime);
-  };
-
-  const setTaskTimer = (taskId: number, min: number, sec: number) => {
-    setActiveTaskId(taskId);
-    setTimeLeft({ min, sec });
-    setInitialTime({ min, sec });
-  };
-
-  const values: ITimerContextType = {
-    activeTaskId,
-    setActiveTaskId,
-    timeLeft,
-    setTimeLeft,
+  const value = {
+    timers,
     startTimer,
     pauseTimer,
     stopTimer,
-    resetTimer,
-    isRunning,
-    setTaskTimer,
+    updateTimer,
+    addTimer,
+    removeTimer
   };
 
   return (
-    <TimerContextStore.Provider value={values}>
+    <TimerContextStore.Provider value={value}>
       {children}
     </TimerContextStore.Provider>
   );

@@ -1,22 +1,32 @@
-// components/Task/Task.tsx
-import React from "react";
-import { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { formatDistanceToNow } from "date-fns";
-import { useContext } from "react";
-import { TimerContextStore } from "../../helpers/contextTimer/timerCreateContext";
+import { useTimer } from "../Timer/useTimer";
 
 export default function Task({ task, onToggle, onDelete, onEdit }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(task.text);
-  const {
-    activeTaskId,
-    timeLeft,
-    startTimer,
-    pauseTimer,
-    stopTimer,
-    isRunning,
-    setTaskTimer,
-  } = useContext(TimerContextStore);
+
+  const { timer, initTimer, controls } = useTimer(
+    task.id,
+    Number(task.min),
+    Number(task.sec),
+    () => {
+      if (!task.completed) onToggle(task.id);
+    }
+  );
+
+  useEffect(() => {
+    return initTimer();
+  }, [initTimer]);
+
+  const handleToggle = () => {
+    const newCompletedState = !task.completed;
+    onToggle(task.id);
+
+    if (newCompletedState) {
+      controls.stop();
+    }
+  };
 
   const handleEdit = () => {
     if (isEditing) {
@@ -29,19 +39,19 @@ export default function Task({ task, onToggle, onDelete, onEdit }) {
     setIsEditing(!isEditing);
   };
 
-  const handleStart = () => {
-    if (activeTaskId !== task.id) {
-      setTaskTimer(task.id, Number(task.min), Number(task.sec));
+  const handleTimerClick = () => {
+    if (timer.isRunning) {
+      controls.pause();
+    } else {
+      controls.start();
     }
-    startTimer();
-  };
-
-  const handlePause = () => {
-    pauseTimer();
   };
 
   const handleStop = () => {
-    stopTimer();
+    controls.stop();
+    if (!task.completed) {
+      onToggle(task.id);
+    }
   };
 
   const formatTime = (min: number, sec: number) => {
@@ -57,7 +67,7 @@ export default function Task({ task, onToggle, onDelete, onEdit }) {
           className="toggle"
           type="checkbox"
           checked={task.completed}
-          onChange={() => onToggle(task.id)}
+          onChange={handleToggle}
         />
         <label>
           <span className="description">{task.text}</span>
@@ -69,40 +79,20 @@ export default function Task({ task, onToggle, onDelete, onEdit }) {
             })}
           </span>
           <span className="timer">
-            {activeTaskId === task.id
-              ? formatTime(timeLeft.min, timeLeft.sec)
-              : formatTime(Number(task.min), Number(task.sec))}
+            {formatTime(timer.timeLeft.min, timer.timeLeft.sec)}
           </span>
         </label>
         <div className="timer-controls">
-          {activeTaskId === task.id ? (
-            <>
-              {isRunning ? (
-                <button
-                  className="icon icon-pause"
-                  onClick={handlePause}
-                  title="Pause"
-                />
-              ) : (
-                <button
-                  className="icon icon-play"
-                  onClick={handleStart}
-                  title="Start"
-                />
-              )}
-              <button
-                className="icon icon-stop"
-                onClick={handleStop}
-                title="Stop"
-              />
-            </>
-          ) : (
-            <button
-              className="icon icon-play"
-              onClick={handleStart}
-              title="Start"
-            />
-          )}
+          <button
+            className={`icon ${timer.isRunning ? "icon-pause" : "icon-play"}`}
+            onClick={handleTimerClick}
+            title={timer.isRunning ? "Pause" : "Start"}
+          />
+          <button
+            className="icon icon-stop"
+            onClick={handleStop}
+            title="Stop"
+          />
           <button
             className="icon icon-edit"
             onClick={handleEdit}
@@ -121,6 +111,7 @@ export default function Task({ task, onToggle, onDelete, onEdit }) {
           value={editText}
           onChange={(e) => setEditText(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleEdit()}
+          autoFocus
         />
       )}
     </li>
