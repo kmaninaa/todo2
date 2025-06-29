@@ -1,7 +1,7 @@
 import React from "react";
 import "./index.css";
 import { useContext } from "react";
-import { ContexStore } from "../../helpers/context/createContext";
+import { ContexStore } from "../../utils/helpers/context/contextMain/createContext";
 import { IFormData } from "./type";
 import { useForm } from "react-hook-form";
 

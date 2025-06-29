@@ -1,9 +1,9 @@
 import React from "react";
 import { useContext } from "react";
 import Task from "./Task";
-import { ContexStore } from "../../helpers/context/createContext";
+import { ContexStore } from "../../utils/helpers/context/contextMain/createContext";
 import Footer from "../Footer/Footer";
-import { ContextButtonsStore } from "../../helpers/contextButtons/createContextButton";
+import { ContextButtonsStore } from "../../utils/helpers/context/contextButtons/createContextButton";
 
 export default function TaskList() {
   const {
@@ -17,7 +17,6 @@ export default function TaskList() {
   const { filter, setFilter } = useContext(ContextButtonsStore);
 
   const tasks = getTasks();
-
 
   const filteredTasks = tasks.filter((task) => {
     if (filter === "active") return !task.completed;

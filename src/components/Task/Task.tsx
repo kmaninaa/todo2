@@ -1,23 +1,23 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { formatDistanceToNow } from "date-fns";
-import { useTimer } from "../Timer/useTimer";
+import { useTimer } from "../../utils/hooks/Timer/useTimer";
 
 export default function Task({ task, onToggle, onDelete, onEdit }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(task.text);
 
-  const { timer, initTimer, controls } = useTimer(
+  const handleComplete = useCallback(() => {
+    if (!task.completed) {
+      onToggle(task.id);
+    }
+  }, [task.id, task.completed, onToggle]);
+
+  const { timer, controls } = useTimer(
     task.id,
     Number(task.min),
     Number(task.sec),
-    () => {
-      if (!task.completed) onToggle(task.id);
-    }
+    handleComplete
   );
-
-  useEffect(() => {
-    return initTimer();
-  }, [initTimer]);
 
   const handleToggle = () => {
     const newCompletedState = !task.completed;
@@ -48,7 +48,7 @@ export default function Task({ task, onToggle, onDelete, onEdit }) {
   };
 
   const handleStop = () => {
-    controls.stop();
+    controls.pause();
     if (!task.completed) {
       onToggle(task.id);
     }

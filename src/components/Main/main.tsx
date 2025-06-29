@@ -2,9 +2,9 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import "../../index.css";
 import App from "../../App.jsx";
-import { StoreProvider } from "../../helpers/context/contextStoreProvider.jsx";
-import { TimerStoreProvider } from "../../helpers/contextTimer/timerContextStoreProvider.jsx";
-import { ButtonsStoreProvider } from "../../helpers/contextButtons/contextButtonsStoreProvider.jsx";
+import { StoreProvider } from "../../utils/helpers/context/contextMain/contextStoreProvider.js";
+import { TimerStoreProvider } from "../../utils/helpers/contextTimer/timerContextStoreProvider.js";
+import { ButtonsStoreProvider } from "../../utils/helpers/context/contextButtons/contextButtonsStoreProvider.js";
 
 let rootElement = document.getElementById("root");
 
@@ -16,12 +16,12 @@ if (!rootElement) {
 
 createRoot(rootElement).render(
   <>
-    <StoreProvider>
-      <ButtonsStoreProvider>
-        <TimerStoreProvider>
+    <TimerStoreProvider>
+      <StoreProvider>
+        <ButtonsStoreProvider>
           <App />
-        </TimerStoreProvider>
-      </ButtonsStoreProvider>
-    </StoreProvider>
+        </ButtonsStoreProvider>
+      </StoreProvider>
+    </TimerStoreProvider>
   </>
 );
